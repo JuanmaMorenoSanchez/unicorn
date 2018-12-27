@@ -4,7 +4,7 @@
  *                                                            *
  **************************************************************/
 
-var copyright = "Juanma Moreno Sanchez, 2018";
+var copyright = "Juanma Moreno Sánchez, 2018";
 //var moreInfo = "Press 'i' for more information";
 
 var bg;
@@ -79,7 +79,7 @@ function getTexts() {
 	} else {
 		textSize(24);
 	}
-	text(copyright, 10, 80);
+	text(copyright, 10, windowHeight-40);
 	/*
 	if (!showMoreText) {
 		//text(moreInfo, 10, 40)
