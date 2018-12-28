@@ -5,13 +5,18 @@
  **************************************************************/
 
 var copyright = "Juanma Moreno Sánchez, 2018";
-//var moreInfo = "Press 'i' for more information";
+var moreInfo = "Press 'i' for more information";
 
 var bg;
 var yasmina, hands;
 var canvas;
 
 var showMoreText = false;
+
+var bitcoinPrice;
+var bitcoinpriceUrl = "https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=BTC&to_currency=USD&apikey=MGC0QST0RZCWJ2QC";
+
+var drops = [];
 
 /************************************************************
  *                                                            *
@@ -20,7 +25,6 @@ var showMoreText = false;
  **************************************************************/
 
 function preload(){
-	//yasmina = loadAnimation('assets/yasmina01.png', 'assets/yasmina05.png');
 	if (windowWidth > windowHeight) {
 		bg = loadImage("assets/background.jpg", windowWidth, windowHeight);
 	} else {
@@ -29,7 +33,10 @@ function preload(){
 } 
  
 function setup() {
+	loadData();
+	
 	canvas = createCanvas(windowWidth, windowHeight);
+	noCursor();
 	pixelDensity(1);
 	frameRate(40);
 	
@@ -52,11 +59,19 @@ function draw() {
 	background(bg);
 	
 	getTexts();
-
-	//animation(yasmina, windowWidth/2, windowHeight-yasmina.getHeight()/2);
 	
 	if(hands.overlap(yasmina)) {
 		hands.changeAnimation('invert');
+		
+		
+		var pointillize = map(mouseX, 0, width, 8, 190);
+		var x = floor(random(bg.width));
+		var y = floor(random(bg.height/2));
+		var pix = bg.get(x, y);
+		fill(pix, 128);
+		ellipse(x, y, pointillize, pointillize);
+		
+		
 	}
 	else {
 		hands.changeAnimation('normal');
@@ -64,6 +79,11 @@ function draw() {
 	
 	hands.position.x = mouseX;
 	hands.position.y = mouseY;
+	
+	for (var i = 0; i < drops.length; i++){
+		drops[i].fall();
+		drops[i].show();
+	}
 	
 	drawSprites();
 }
@@ -75,12 +95,13 @@ function draw() {
  *                                                            *
  **************************************************************/
 
- /*
+ 
 function keyPressed() {
 	if (key == 'I' || keyCode == 73){
 		showMoreText = ! showMoreText
 	}
-}*/
+	getTexts();
+}
 /*
 function mousePressed() {
   //background(bg);
@@ -95,20 +116,36 @@ function mousePressed() {
  *                                                            *
  **************************************************************/
 
+ function loadData() {
+	loadJSON(bitcoinpriceUrl, getBitcoin);
+    frameCount = -1;
+}
+
+function getBitcoin(price){
+	bitcoinPrice = price["Realtime Currency Exchange Rate"]["5. Exchange Rate"];
+	
+	//no es elegante ponerlo aquí
+	for (var i = 0; i < bitcoinPrice; i++){
+		drops[i] = new Drop();
+	}
+}
+ 
 function getTexts() {
 	fill(200);
 	if (windowWidth > windowHeight) {
 		textSize(16);
-		text(copyright, 10, 80)
 	} else {
 		textSize(28);
-		text(copyright, 10, 120)
 	}
-	/*
+	
+	text(copyright, 10, 100);
+	
 	if (!showMoreText) {
-		//text(moreInfo, 10, 40)
+		text(moreInfo, 10, 120)
 	}
 	else {
-		//text("XXXX", 10, 60)
-	}*/
+		if (bitcoinPrice){
+			text("Bitcoin price " + bitcoinPrice + " USD", 10, 120);
+		}
+	}
 }
