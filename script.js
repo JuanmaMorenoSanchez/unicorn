@@ -145,7 +145,7 @@ function getTexts() {
 	}
 	else {
 		if (bitcoinPrice){
-			text("Bitcoin price " + bitcoinPrice + " USD", 10, 120);
+			text(round(bitcoinPrice) + " rain drops. One for each dollar is in a Bitcoin today.", 10, 120);
 		}
 	}
 }
